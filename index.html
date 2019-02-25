@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <title>WVS Explorer</title>
+    <link rel="stylesheet" type="text/css" href="parallel.css" />
+<!--       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+ -->  </head>
+  <body class="dark">
+  <div id="header">
+    <h1>WVS Explorer</h1>
+    <button title="Export data as CSV" id="export-data">Export</button>
+    <div class="controls">
+      <strong id="rendered-count"></strong>/<strong id="selected-count"></strong><!--<strong id="data-count"></strong>-->
+      <div class="fillbar"><div id="selected-bar"><div id="rendered-bar">&nbsp;</div></div></div>
+      Lines at <strong id="opacity"></strong> opacity.
+      <span class="settings">
+<!--         <button id="hide-ticks">Hide Ticks</button>
+        <button id="show-ticks" disabled="disabled">Show Ticks</button>
+        <button id="dark-theme">Dark</button>
+        <button id="light-theme" disabled="disabled">Light</button> -->
+      </span>
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  
+  <div class="rowsie">
+    <h1 id="selected-wave-hl" class="wave"> </h1>
+    <div id="selectWave" class="menu select big">
+       <select id="selectMenu" autocomplete="off" onchange="selectWave()">
+        <option value="wave6" selected disabled hidden>Select a wave</option>-->    
+        <option value="wave6">Wave 6 2010-2014</option>
+        <option value="wave5">Wave 5 2005-2009</option>
+        <option value="wave4">Wave 4 1999-2004</option>
+        <option value="wave3">Wave 3 1995-1999</option>
+      </select> 
+    </div>
+  </div>
+
+  <div id="chart">
+    <canvas id="background"></canvas>
+    <canvas id="foreground"></canvas>
+    <canvas id="highlight"></canvas>
+    <svg></svg>
+  </div>
+  <div id="wrap">
+    <div class="third" id="controls">
+      <div class="bright">
+        <h3>What is this?</h3>
+        <p>
+          A multidimensional explorer of WVS survey data from <a href="http://www.worldvaluessurvey.org/wvs.jsp">WVS</a>.
+        </p>
+        <p>
+          The parallel coordinates display percentage of country population that expressed confidence in different organizations. In other words; the percentage of respondees that expressed "great deal of confidence" or "quite a lot of confidence" which were the two highest tiers on a likert scale with four options. The lines corresponding to each country is colored by continent belonging (according to the United Nations definitions).
+        </p>  
+        <p>
+          <a href="http://eagereyes.org/techniques/parallel-coordinates#brushing">Brush</a> the visualization to update other charts on this page.
+        </p>
+        <p>
+          Let me know what you think on <a href="http://www.reddit.com/r/d3js/comments/xh2ks/nutrition_parallel_coordinates_canvas/">Reddit</a>.
+        </p>
+      </div>
+
+      <div class="little-box">
+        <h3>Controls</h3>
+        <p>
+          <strong>Brush</strong>: Drag vertically along an axis.<br/>
+          <strong>Remove Brush</strong>: Tap the axis background.<br/>
+          <strong>Reorder Axes</strong>: Drag a label horizontally.<br/>
+          <strong>Invert Axis</strong>: Tap an axis label.<br/>
+          <strong>Remove Axis</strong>: Drag axis label to the left edge.<br/>
+        </p>
+      </div>
+      <div class="little-box">
+        <h3>Credits &amp; License</h3>
+          <p>
+          Adapted from examples by<br/>
+          <a href="http://bl.ocks.org/1341021">Mike Bostock</a>, <a href="http://bl.ocks.org/1341281">Jason Davies</a> and the Nutrition explorer by Kai Chang.<br/>
+          </p>
+          <p>
+            Copyright &copy; 2012, Kai Chang<br/>
+            All rights reserved. Released under the <a href="http://opensource.org/licenses/bsd-3-clause">BSD License</a>.
+          </p>
+        </p>
+      </div>
+    </div>
+    <div  class="third">
+      <small>
+        <!--Last rendered <strong id="render-speed"></strong> lines-->
+      </small>
+      <h3>Continents</h3>
+      <p id="legend">
+      </p>
+    </div>
+    <div class="third">
+      <h3>Sample of 25 countries <input type="text" id="search" placeholder="Search countries..."></input></h3>
+      <p id="country-list">
+      </p>
+    </div>
+  </div>
+  </body>
+
+  <script src="http://mbostock.github.com/d3/d3.v2.js"></script>
+  <script src="http://underscorejs.org/underscore.js"></script>
+  <script src="parallel.js"></script>
+</html>
