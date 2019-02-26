@@ -2,13 +2,13 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <title>WVS Explorer</title>
+    <title>World Data Explorer</title>
     <link rel="stylesheet" type="text/css" href="parallel.css" />
 <!--       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
  -->  </head>
   <body class="dark">
   <div id="header">
-    <h1>WVS Explorer</h1>
+    <h1>World Data Explorer</h1>
     <button title="Export data as CSV" id="export-data">Export</button>
     <div class="controls">
       <strong id="rendered-count"></strong>/<strong id="selected-count"></strong><!--<strong id="data-count"></strong>-->
@@ -57,7 +57,7 @@
           <a href="http://eagereyes.org/techniques/parallel-coordinates#brushing">Brush</a> the visualization to update other charts on this page.
         </p>
         <p>
-          Let me know what you think on <a href="http://www.reddit.com/r/d3js/comments/xh2ks/nutrition_parallel_coordinates_canvas/">Reddit</a>.
+          When you have discovered some countries of interest for a specific wave, you can select those through clicking them in the sample list on your right. Select a dataset from the dropdown menu and hit compare to get corresponding gapminder data.
         </p>
       </div>
 
@@ -91,12 +91,43 @@
       <h3>Continents</h3>
       <p id="legend">
       </p>
+      <!-- under continents -->
+      <div id="gapminder" class="gapminder info">
+        <h2>Selected Countries</h2>
+         <ul id="selectedList">
+        </ul> 
+
+
+        <div class="">
+          <h1 id="selected-compare-hl" class="compare"> </h1>
+          <div id="selectGap" class="menu select big">
+           <select id="selectCompare" autocomplete="off">
+            <option value="" selected disabled hidden>Select Gapminder Data</option>-->    
+            <option value="cellp100-score.csv">Cellphones per 100 people</option>
+            <option value="democr-score.csv">Democracy Score</option>
+            <option value="gdpcapita-score.csv">GDP per capita</option>
+            <option value="infmort-score.csv">Infant mortality</option>
+           </select> 
+          </div>
+        </div>
+        <button class="big" onclick="compare()">Compare</button>
+      </div>
+
     </div>
     <div class="third">
       <h3>Sample of 25 countries <input type="text" id="search" placeholder="Search countries..."></input></h3>
       <p id="country-list">
       </p>
     </div>
+  </div>
+  <div id="wrap2">
+    <h2> Gapminder Comparison </h2>
+    <div id="comparison-div">
+      <ul id="comparison-ul">
+      </ul>
+    </div>
+
+
   </div>
   </body>
 

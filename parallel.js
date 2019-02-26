@@ -21,8 +21,13 @@ var m = [60, 0, 10, 0],
     legend,
     render_speed = 50,
     brush_count = 0,
-    excluded_groups = []
-    activeWave = "";
+    excluded_groups = [],
+    activeWave = "",
+    selectedCountries = [],
+    cellp_data,
+    demo_data,
+    gdp_data,
+    infmort_data;
 
 var colors = {
   "Asia": [28,100,52],
@@ -100,6 +105,57 @@ function selectWave() {
   loadWave(waveToLoad);
   }
 }
+
+
+d3.csv("cellp100-score.csv", function(raw_data) {
+  cellp_data =  raw_data.map(function(d) {
+      for (var k in d) {
+        if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
+          d[k] = parseFloat(d[k]) || 0;
+        }
+      };
+      //console.log(d);
+      return d;
+  });
+      console.log(cellp_data);
+});
+
+d3.csv("democracy-score.csv", function(raw_data) {
+  demo_data =  raw_data.map(function(d) {
+      for (var k in d) {
+        if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
+          d[k] = parseFloat(d[k]) || 0;
+        }
+      };
+      //console.log(d);
+      return d;
+  });
+});
+
+d3.csv("gdpcapita-score.csv", function(raw_data) {
+  gdp_data =  raw_data.map(function(d) {
+      for (var k in d) {
+        if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
+          d[k] = parseFloat(d[k]) || 0;
+        }
+      };
+      //console.log(d);
+      return d;
+  });
+});
+
+d3.csv("infmort-score.csv", function(raw_data) {
+  infmort_data =  raw_data.map(function(d) {
+      for (var k in d) {
+        if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
+          d[k] = parseFloat(d[k]) || 0;
+        }
+      };
+      //console.log(d);
+      return d;
+  });
+});
+
 
 function loadWave(waveFile) {
   // console.log(dimensions); 
@@ -321,6 +377,7 @@ function data_table(sample) {
     return a[col] < b[col] ? -1 : 1;
   });
 
+  
   console.log("Sample in data_table()");
   console.log(sample);
 
@@ -332,6 +389,7 @@ function data_table(sample) {
       .attr("id", function(d) {console.log(typeof d.name); return d.name})
       .on("click", function (d){
         console.log("Du klickade på mig");
+        populateSelList(d.name);
       })
       .on("mouseover", highlight)
       .on("mouseout", unhighlight);
@@ -344,7 +402,27 @@ function data_table(sample) {
   table
     .append("span")
       .text(function(d) { return d.name; })
-      .append("title").text("Wiho")
+}
+
+
+function populateSelList(name) {
+  console.log("pop sel list");
+  selectedCountries.push(name);
+  var listItem = d3.select("#selectedList")
+    .append("li")
+    .html(name);
+  listItem.append("span")
+    .attr("class", "close")
+    .on("click", function() {
+      this.parentElement.style.display="none";
+      var idx = selectedCountries.indexOf(name);
+      console.log(selectedCountries);
+      console.log(name);
+      if (idx > -1) {
+        selectedCountries.splice(idx, 1);
+      }
+    })
+    .html("x");
 }
 
 
@@ -860,3 +938,91 @@ function search(selection,str) {
   pattern = new RegExp(str,"i")
   return _(selection).filter(function(d) { return pattern.exec(d.name); });
 }
+
+function compare() {
+  // console.log(selectedCountries);
+  // console.log(activeWave);
+  var compGapData = document.getElementById("selectCompare").value;
+  //clear div
+  var yearArray = returnYearArray(); 
+
+  
+  if (compGapData == "cellp100-score.csv") {
+      populateCompareList(selectedCountries, yearArray, cellp_data, "Cellphones per 100 people: ");
+    // var gapdata = "";
+
+  }
+   else if (compGapData == "democr-score.csv") {
+    populateCompareList(selectedCountries, yearArray, demo_data, "Democracy Score: ");
+  }
+   else if (compGapData == "gdpcapita-score.csv") {
+    populateCompareList(selectedCountries, yearArray, gdp_data, "GDP per capita: ");
+  }
+   else {
+    populateCompareList(selectedCountries, yearArray, infmort_data, "Infant Mortality Rate: ");
+  }
+
+}
+
+function populateCompareList(nameArray, yearArray, compGap, compGapQuestion) {
+  
+  var i;
+  var compareItem;
+  var compGapInfo;
+  var countryName;
+  //var year = yearArray[0];
+
+  for (i = 0; i < nameArray.length; i++) {
+    var gapCountryObj;
+    idx_data = data.findIndex(x => x.name==nameArray[i]);
+    idx_gap = compGap.findIndex(x => x.name==nameArray[i]);
+    
+    if (idx_gap == -1) {
+      compGapInfo = "Unavailable";
+    }
+    else {
+          gapCountryObj = compGap[idx_gap];
+          console.log(gapCountryObj);
+          compGapInfo = gapCountryObj[yearArray[0]];
+          //exceptGapminderData(gapCountryObj, yearArray);
+    }
+    
+    compareItem = d3.select("#comparison-ul")
+      .append("li")
+      .style("background", function() { return color(data[idx_data].group, 0.85)})
+      .html(nameArray[i] + "<br/> Continent: " + data[idx_data].group + "<br/>" + compGapQuestion + compGapInfo)
+        .append("span")
+        .attr("class", "close")
+        .on("click", function(name) {this.parentElement.style.display="none";})
+        .html("x");
+  } 
+}
+
+function returnYearArray() {
+  if (activeWave == "wave6") {
+    return ["2010"]
+  }
+  else if (activeWave == "wave5") {
+    return ["2005"]
+  }
+  else if (activeWave == "wave4") {
+      return ["1999"]
+  }
+  else {
+    return ["1995"]
+  }
+}
+
+function exceptGapminderData(compData, yearArray) {
+  if (compData[yearArray[0]] == undefined) {
+    return "Not Available"
+  }
+  else {
+    return compData[yearArray[0]]
+  }
+}
+//gör catch except om TypeError: compGap[idx_gap] is undefined = > unavailable för gapminderdata saknas
+
+
+
+
