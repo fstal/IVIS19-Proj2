@@ -72,12 +72,9 @@ var svg = d3.select("svg")
   .append("svg:g")
     .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
-
-
 function selectWave() {
   var sel = document.getElementById("selectMenu");
   var selectionValue = sel.value;
-  //console.log("selectvalue is : " + selectionValue);
 
   if (selectionValue !== undefined && selectionValue !== activeWave) {
     activeWave = sel.value;
@@ -99,69 +96,63 @@ function selectWave() {
     }
     else {
       activeWaveText.innerHTML = partWaveText + "Wave 6 (2010-2014)";
-      waveToLoad = selectionValue + waveToLoad;
+      waveToLoad =  selectionValue + waveToLoad;
     }
   svg.selectAll("*").remove();
-  loadWave(waveToLoad);
+  loadWave("wvs-data/" + waveToLoad);
   }
 }
 
 
-d3.csv("cellp100-score.csv", function(raw_data) {
+d3.csv("gapminder-data/cellp100-score.csv", function(raw_data) {
   cellp_data =  raw_data.map(function(d) {
       for (var k in d) {
         if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
           d[k] = parseFloat(d[k]) || 0;
         }
       };
-      //console.log(d);
       return d;
   });
-      console.log(cellp_data);
 });
 
-d3.csv("democracy-score.csv", function(raw_data) {
+d3.csv("gapminder-data/democracy-score.csv", function(raw_data) {
   demo_data =  raw_data.map(function(d) {
       for (var k in d) {
         if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
           d[k] = parseFloat(d[k]) || 0;
         }
       };
-      //console.log(d);
       return d;
   });
 });
 
-d3.csv("gdpcapita-score.csv", function(raw_data) {
+d3.csv("gapminder-data/gdpcapita-score.csv", function(raw_data) {
   gdp_data =  raw_data.map(function(d) {
       for (var k in d) {
         if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
           d[k] = parseFloat(d[k]) || 0;
         }
       };
-      //console.log(d);
       return d;
   });
 });
 
-d3.csv("infmort-score.csv", function(raw_data) {
+d3.csv("gapminder-data/infmort-score.csv", function(raw_data) {
   infmort_data =  raw_data.map(function(d) {
       for (var k in d) {
         if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
           d[k] = parseFloat(d[k]) || 0;
         }
       };
-      //console.log(d);
       return d;
   });
 });
 
 
 function loadWave(waveFile) {
-  // console.log(dimensions); 
   yscale = {};
   console.log("wavefile is:" + waveFile);
-  // dimensions = [];
+
   // Load the data and visualization
   d3.csv(waveFile, function(raw_data) {
     // Convert quantitative scales to floats
@@ -171,11 +162,8 @@ function loadWave(waveFile) {
           d[k] = parseFloat(d[k]) || 0;
         }
       };
-      //console.log(d);
       return d;
     });
-
-    //console.log(data);
 
     // Extract the list of numerical dimensions and create a scale for each.
     xscale.domain(dimensions = d3.keys(data[0]).filter(function(k) {
@@ -183,15 +171,6 @@ function loadWave(waveFile) {
         .domain(d3.extent(data, function(d) { return +d[k]; }))
         .range([h, 0]));
     }).sort());
-
-    // console.log("TRE");
-    // console.log(xscale);
-    // console.log("TRE");
-
-    // console.log("--");
-    // console.log(yscale);
-    // console.log("--");
-
 
     // Add a group element for each dimension.
     var g = svg.selectAll(".dimension")
@@ -278,11 +257,6 @@ function loadWave(waveFile) {
         .append("title")
           .text("Drag or resize this filter");
 
-    //     console.log("!!");
-    // console.log(yscale);
-    // console.log("!!");
-
-
     legend = create_legend(colors,brush);
 
     // Render full foreground
@@ -294,7 +268,6 @@ function loadWave(waveFile) {
 selectWave();
 
 // -------------------------------
-
 
 // copy one canvas to another, grayscale
 function gray_copy(source, target) {
@@ -325,10 +298,7 @@ function create_legend(colors,brush) {
     .data( _.keys(colors).sort() )
 
   // filter by group
-  // console.log("Colors:")
-  // console.log(colors);
-  // console.log("Data:");
-  // console.log(data);
+
   var legend = legend_data
     .enter().append("div")
       .attr("title", "Hide group")
@@ -377,18 +347,13 @@ function data_table(sample) {
     return a[col] < b[col] ? -1 : 1;
   });
 
-  
-  console.log("Sample in data_table()");
-  console.log(sample);
-
   var table = d3.select("#country-list")
     .html("")
     .selectAll(".row")
       .data(sample)
     .enter().append("div")
-      .attr("id", function(d) {console.log(typeof d.name); return d.name})
+      .attr("id", function(d) {return d.name})
       .on("click", function (d){
-        console.log("Du klickade på mig");
         populateSelList(d.name);
       })
       .on("mouseover", highlight)
@@ -406,7 +371,6 @@ function data_table(sample) {
 
 
 function populateSelList(name) {
-  console.log("pop sel list");
   selectedCountries.push(name);
   var listItem = d3.select("#selectedList")
     .append("li")
@@ -416,35 +380,12 @@ function populateSelList(name) {
     .on("click", function() {
       this.parentElement.style.display="none";
       var idx = selectedCountries.indexOf(name);
-      console.log(selectedCountries);
-      console.log(name);
       if (idx > -1) {
         selectedCountries.splice(idx, 1);
       }
     })
     .html("x");
 }
-
-
-
-//   var table = d3.select("#country-list")
-//     .html("")
-//     .selectAll(".row")
-//       .data(sample)
-//     .enter().append("div")
-//       .on("mouseover", highlight)
-//       .on("mouseout", unhighlight);
-
-//   table
-//     .append("span")
-//       .attr("class", "color-block")
-//       .style("background", function(d) { return color(d.group,0.85) });
-
-//   table
-//     .append("span")
-//       .text(function(d) { return d.name; })
-// console.log("Nu är jag här");
-// }
 
 // Adjusts rendering speed 
 function optimize(timer) {
@@ -502,29 +443,10 @@ function invert_axis(d) {
       .style("text-decoration", "underline");
     yscale[d].inverted = true;
   }
-    //   console.log("KK");
-    // console.log(yscale);
-    // console.log("KK");
+
   return extent;
 }
 
-// Draw a single polyline
-/*
-function path(d, ctx, color) {
-  if (color) ctx.strokeStyle = color;
-  var x = xscale(0)-15;
-      y = yscale[dimensions[0]](d[dimensions[0]]);   // left edge
-  ctx.beginPath();
-  ctx.moveTo(x,y);
-  dimensions.map(function(p,i) {
-    x = xscale(p),
-    y = yscale[p](d[p]);
-    ctx.lineTo(x, y);
-  });
-  ctx.lineTo(x+15, y);                               // right edge
-  ctx.stroke();
-}
-*/
 
 function path(d, ctx, color) {
   if (color) ctx.strokeStyle = color;
@@ -548,10 +470,8 @@ function path(d, ctx, color) {
 };
 
 function color(d,a) {
-  // console.log(d);
   var c = colors[d];
-  // console.log("QQQ")
-  // console.log(c);
+
   return ["hsla(",c[0],",",c[1],"%,",c[2],"%,",a,")"].join("");
 }
 
@@ -563,12 +483,8 @@ function position(d) {
 // Handles a brush event, toggling the display of foreground lines.
 // TODO refactor
 function brush() {
-    //   console.log("YY");
-    // console.log(yscale);
-    // console.log(dimensions);
-    // console.log("YY");
   brush_count++;
-  var actives = dimensions.filter(function(p) { console.log(yscale); return !yscale[p].brush.empty(); }),
+  var actives = dimensions.filter(function(p) {return !yscale[p].brush.empty(); }),
       extents = actives.map(function(p) { return yscale[p].brush.extent(); });
 
   // hack to hide ticks beyond extent
@@ -641,7 +557,6 @@ function brush() {
   legend
     .style("text-decoration", function(d) { return _.contains(excluded_groups,d) ? "line-through" : null; })
     .attr("class", function(d) {
-      //console.log(tallies);
       return (tallies[d].length > 0)
            ? "row"
            : "row off";
@@ -668,15 +583,10 @@ function paths(selected, ctx, count) {
 
   selection_stats(opacity, n, data.length)
 
-  console.log("Selected array:")
-  console.log(selected);
   //shuffle just because why not
   shuffled_data = _.shuffle(selected);
 
   data_table(shuffled_data.slice(0,25));
-
-  //console.log("Shuffled and sliced select array:")
-  //console.log(shuffled_data.slice(0,25));
 
   ctx.clearRect(0,0,w+1,h+1);
 
@@ -710,9 +620,6 @@ function update_ticks(d, extent) {
     // all ticks
     d3.selectAll(".brush")
       .each(function(d) { d3.select(this).call(yscale[d].brush = d3.svg.brush().y(yscale[d]).on("brush", brush)); })
-    //   console.log("RR");
-    // console.log(yscale);
-    // console.log("RR");
   }
 
   brush_count++;
@@ -740,16 +647,12 @@ function update_ticks(d, extent) {
         .style('font-size', null)
         .style('display', null);
     });
-    //     console.log("WW");
-    // console.log(yscale);
-    // console.log("WW");
+
 }
 
 // Rescale to new dataset domain
 function rescale() {
-    //   console.log("ÖÖ");
-    // console.log(yscale);
-    // console.log("ÖÖ");
+
   // reset yscales, preserving inverted state
   dimensions.forEach(function(d,i) {
     if (yscale[d].inverted) {
@@ -762,9 +665,6 @@ function rescale() {
           .domain(d3.extent(data, function(p) { return +p[d]; }))
           .range([h, 0]);
     }
-    //     console.log("XX");
-    // console.log(yscale);
-    // console.log("XX");
   });
 
   update_ticks();
@@ -777,9 +677,7 @@ function rescale() {
 function actives() {
   var actives = dimensions.filter(function(p) { return !yscale[p].brush.empty(); }),
       extents = actives.map(function(p) { return yscale[p].brush.extent(); });
-    // console.log("MM");
-    // console.log(yscale);
-    // console.log("MM");
+
   // filter extents and excluded groups
   var selected = [];
   data
@@ -837,9 +735,6 @@ window.onresize = function() {
   xscale = d3.scale.ordinal().rangePoints([0, w], 1).domain(dimensions);
   dimensions.forEach(function(d) {
     yscale[d].range([h, 0]);
-        console.log("AA");
-    console.log(yscale);
-    console.log("AA");
   });
 
   d3.selectAll(".dimension")
@@ -848,9 +743,6 @@ window.onresize = function() {
   d3.selectAll(".brush")
     .each(function(d) { d3.select(this).call(yscale[d].brush = d3.svg.brush().y(yscale[d]).on("brush", brush)); })
   brush_count++;
-      console.log("RR");
-    console.log(yscale);
-    console.log("RR");
 
   // update axis placement
   axis = axis.ticks(1+height/50),
@@ -859,9 +751,6 @@ window.onresize = function() {
 
   // render data
   brush();
-    //   console.log("EE");
-    // console.log(yscale);
-    // console.log("EE");
 };
 
 // Remove all but selected from the dataset
@@ -940,8 +829,6 @@ function search(selection,str) {
 }
 
 function compare() {
-  // console.log(selectedCountries);
-  // console.log(activeWave);
   var compGapData = document.getElementById("selectCompare").value;
   //clear div
   var yearArray = returnYearArray(); 
@@ -982,7 +869,6 @@ function populateCompareList(nameArray, yearArray, compGap, compGapQuestion) {
     }
     else {
           gapCountryObj = compGap[idx_gap];
-          console.log(gapCountryObj);
           compGapInfo = gapCountryObj[yearArray[0]];
           //exceptGapminderData(gapCountryObj, yearArray);
     }
